@@ -4,7 +4,7 @@ maintainer: Florian Waibel <fwaibel@eclipsesource.com>
 description: |
   The Instauth Charm will download an adapter from the repo,
   execute it inside the connected charm and then make the
-  charm talk to any charm that implements the Auth relation.
+  charm talk to any charm that implements the auth relation.
   See https://github.com/instauth/instauth-charm
 
   This is work in progress.
@@ -16,6 +16,6 @@ requires:
     interface: sso-config
     scope: container
 provides:
-  Auth:
+  auth:
     interface: oic-config
     gets: [issuer_url]
