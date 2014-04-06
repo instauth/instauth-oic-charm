@@ -62,7 +62,7 @@ REL_NAME=${SCRIPT_BASENAME%-hooks.sh}
 
 
 # Command
-if [ -L "$0" ]; then
+if [[ -L "$0" || -z "$1" ]]; then
     COMMAND=$(basename "$0")
 else
     COMMAND="$1"

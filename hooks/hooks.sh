@@ -17,7 +17,7 @@ case $0 in
         ;;
 esac
 
-if [ -L "$0" ]; then
+if [[ -L "$0" || -z "$1" ]]; then
     COMMAND=$(basename "$0")
 else
     COMMAND="$1"
