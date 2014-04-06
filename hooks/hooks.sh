@@ -65,7 +65,7 @@ do_create_symlinks() {
     for cmd in $CHARM_HOOKS; do
 	[ "$cmd" != "create-symlinks" ] && ln -v -s "$THIS" $cmd; 
     done
-    for rel in $KNOWN_RELATIONS; do 
+    for rel in $KNOWN_RELATIONS; do
 	./${rel}-hooks.sh create-symlinks
     done
 }
@@ -102,7 +102,7 @@ docommand() {
 	    ;;
 
 	*)
-	    echo Unknown command: $COMMAND
+	    echo Unknown command: "'$COMMAND'"
 	    exit 1
 	    ;;
     esac
