@@ -2,7 +2,8 @@
 
 set -e # If any command fails, stop execution of the hook with that error
 
-LOGCMD=$(which juju-log || echo echo)
+source "$(dirname "$0")/config.sh"
+
 REL_SET=$(which relation-set   || echo echo "relation-set ")
 REL_GET=$(which relation-get   || echo echo "relation-get ")
 REL_LIST=$(which relation-list || echo echo "relation-list " )
@@ -28,6 +29,9 @@ do_joined() {
     # This action should be idempotent.
     $LOGCMD "Relation $REL_NAME: $JUJU_REMOTE_UNIT joined"
     echo unitName=$JUJU_REMOTE_UNIT > hostInformation.properties
+
+    $LOGCMD fake host interface resolution for $JUJU_REMOTE_UNIT
+    ln -s reconfigure-simple-web-app $HOST_SCR
 }
 
 do_changed() {
@@ -43,6 +47,8 @@ do_changed() {
 do_departed() {
     # This action should be idempotent.
     $LOGCMD "Relation $REL_NAME: $JUJU_REMOTE_UNIT departed"
+
+    rm -f $HOST_SCR
 }
 
 do_broken() {

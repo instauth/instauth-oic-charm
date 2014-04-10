@@ -52,20 +52,27 @@ do_changed() {
     $LOGCMD Relation members:
     $LOGCMD $($REL_LIST)
 
-    ISSUER_URL=$($REL_GET issuer_url)
-    AUTH_URL=$($REL_GET authorization_endpoint)
-    TOKEN_URL=$($REL_GET token_endpoint)
-    USERINFO_URL=$($REL_GET userinfo_endpoint)
-    JWKS_URL=$($REL_GET jwks_endpoint)
+    [ -x $HOST_SCR ] || { $LOGCMD "host configurator not resolved."; exit 0; }
 
-    do_reconfigure
+    $HOST_SCR begin
+    $HOST_SCR set issuer_url   <<< $($REL_GET issuer_url)
+    $HOST_SCR set auth_url     <<< $($REL_GET authorization_endpoint)
+    $HOST_SCR set token_url    <<< $($REL_GET token_endpoint)
+    $HOST_SCR set userinfo_url <<< $($REL_GET userinfo_endpoint)
+    $HOST_SCR set jwks_url     <<< $($REL_GET jwks_endpoint)
+    $HOST_SCR commit
+
 }
 
 do_departed() {
     # This action should be idempotent.
     $LOGCMD "Relation $REL_NAME: $JUJU_REMOTE_UNIT departed"
 
-    do_reconfigure
+    [ -x $HOST_SCR ] || { $LOGCMD "host configurator not resolved."; exit 0; }
+
+    $HOST_SCR begin
+    $HOST_SCR defaults
+    $HOST_SCR commit
 }
 
 do_broken() {
