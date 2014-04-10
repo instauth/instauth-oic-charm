@@ -31,7 +31,8 @@ do_joined() {
     echo unitName=$JUJU_REMOTE_UNIT > hostInformation.properties
 
     $LOGCMD fake host interface resolution for $JUJU_REMOTE_UNIT
-    ln -s reconfigure-simple-web-app $HOST_SCR
+    REMOTE_SERVICE=$(echo $JUJU_REMOTE_UNIT | sed 's;/.*;;')
+    ln -s reconfigure-$REMOTE_SERVICE $HOST_SCR
 }
 
 do_changed() {
