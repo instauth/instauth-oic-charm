@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e # If any command fails, stop execution of the hook with that error
+
 source "$(dirname "$0")/config.sh"
 
 CHARM_HOOKS="install start config-changed stop upgrade-charm"

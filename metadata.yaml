@@ -13,7 +13,7 @@ categories:
 subordinate: true
 requires:
   sso-host:
-    interface: sso-config
+    interface: juju-info
     scope: container
 provides:
   auth:

@@ -1,7 +1,8 @@
 #!/bin/bash
 
-source "$(dirname "$0")/config.sh"
+set -e # If any command fails, stop execution of the hook with that error
 
+LOGCMD=$(which juju-log || echo echo)
 REL_SET=$(which relation-set   || echo echo "relation-set ")
 REL_GET=$(which relation-get   || echo echo "relation-get ")
 REL_LIST=$(which relation-list || echo echo "relation-list " )
@@ -26,21 +27,7 @@ fi
 do_joined() {
     # This action should be idempotent.
     $LOGCMD "Relation $REL_NAME: $JUJU_REMOTE_UNIT joined"
-}
-
-do_reconfigure() {
-    [ -z "$ISSUER_URL" ] && ISSUER_URL="http://localhost:8080/openid-connect-server-webapp/"
-
-    cat <<EOD > /srv/simple-web-app/src/main/webapp/WEB-INF/spring/application.properties
-idp.url=$ISSUER_URL
-idp.authorization.url=${ISSUER_URL}authorize
-idp.token.url=${ISSUER_URL}token
-idp.userInfo.url=${ISSUER_URL}userinfo
-idp.jwks.url=${ISSUER_URL}jwk
-EOD
-    /srv/simple-web-app/stop
-    /srv/simple-web-app/start & 
-    disown
+    echo unitName=$JUJU_REMOTE_UNIT > hostInformation.properties
 }
 
 do_changed() {
@@ -50,17 +37,12 @@ do_changed() {
     $LOGCMD $($REL_GET)
     $LOGCMD Relation members:
     $LOGCMD $($REL_LIST)
-
-    ISSUER_URL=$($REL_GET issuer_url)
-
-    do_reconfigure
+    
 }
 
 do_departed() {
     # This action should be idempotent.
     $LOGCMD "Relation $REL_NAME: $JUJU_REMOTE_UNIT departed"
-
-    do_reconfigure
 }
 
 do_broken() {
@@ -71,7 +53,7 @@ do_broken() {
 
 do_create_symlinks() {
     THIS=$(basename "$0")
-    for cmd in $REL_ACTIONS; do
+    for cmd in $REL_ACTIONS; do 
 	ln -v -s "$THIS" ${REL_NAME}-relation-${cmd}
     done
 }
