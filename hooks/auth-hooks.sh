@@ -71,7 +71,7 @@ do_departed() {
     [ -x $HOST_SCR ] || { $LOGCMD "host configurator not resolved."; exit 0; }
 
     $HOST_SCR begin
-    $HOST_SCR defaults
+    $HOST_SCR default
     $HOST_SCR commit
 }
 
