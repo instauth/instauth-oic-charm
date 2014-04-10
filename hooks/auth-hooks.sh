@@ -29,15 +29,16 @@ do_joined() {
 }
 
 do_reconfigure() {
-    [ -z "$ISSUER_URL" ] && ISSUER_URL="http://localhost:8080/openid-connect-server-webapp/"
 
     cat <<EOD > /srv/simple-web-app/src/main/webapp/WEB-INF/spring/application.properties
-idp.url=$ISSUER_URL
-idp.authorization.url=${ISSUER_URL}authorize
-idp.token.url=${ISSUER_URL}token
-idp.userInfo.url=${ISSUER_URL}userinfo
-idp.jwks.url=${ISSUER_URL}jwk
+idp.url=${ISSUER_URL:=http://localhost:8080/openid-connect-server-webapp/}
+idp.authorization.url=${AUTH_URL:=${ISSUER_URL}authorize}
+idp.token.url=${TOKEN_URL:=${ISSUER_URL}token}
+idp.userInfo.url=${USERINFO_URL:=${ISSUER_URL}userinfo}
+idp.jwks.url=${JWKS_URL:=${ISSUER_URL}jwk}
 EOD
+
+    # restart
     /srv/simple-web-app/stop
     /srv/simple-web-app/start & 
     disown
@@ -52,6 +53,10 @@ do_changed() {
     $LOGCMD $($REL_LIST)
 
     ISSUER_URL=$($REL_GET issuer_url)
+    AUTH_URL=$($REL_GET authorization_endpoint)
+    TOKEN_URL=$($REL_GET token_endpoint)
+    USERINFO_URL=$($REL_GET userinfo_endpoint)
+    JWKS_URL=$($REL_GET jwks_endpoint)
 
     do_reconfigure
 }
