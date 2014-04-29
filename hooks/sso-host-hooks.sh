@@ -12,7 +12,7 @@ REL_ACTIONS="joined changed departed broken"
 
 
 # Relation
-[[ $(basename "$0") =~ ^([a-z]|[a-z][a-z-]*[a-z]) ]] && REL_NAME=${BASH_REMATCH[1]}
+[[ $(basename "$0") =~ ^([a-z]|[a-z][a-z-]*[a-z])(-hooks\.sh)$ ]] && REL_NAME=${BASH_REMATCH[1]}
 [[ "$REL_NAME" =~ ^(.*)-relation-[a-z]+$ ]] && REL_NAME=${BASH_REMATCH[1]}
 
 # Command
@@ -39,9 +39,9 @@ do_changed() {
     # This action should be idempotent.
     $LOGCMD "Relation $REL_NAME: $JUJU_REMOTE_UNIT modified its settings"
     $LOGCMD Relation settings:
-    $LOGCMD $($REL_GET)
+    $LOGCMD $(relation-get)
     $LOGCMD Relation members:
-    $LOGCMD $($REL_LIST)
+    $LOGCMD $(relation-list)
     
 }
 

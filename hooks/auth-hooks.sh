@@ -10,7 +10,7 @@ REL_ACTIONS="joined changed departed broken"
 
 
 # Relation
-[[ $(basename "$0") =~ ^([a-z]|[a-z][a-z-]*[a-z]) ]] && REL_NAME=${BASH_REMATCH[1]}
+[[ $(basename "$0") =~ ^([a-z]|[a-z][a-z-]*[a-z])(-hooks\.sh)$ ]] && REL_NAME=${BASH_REMATCH[1]}
 [[ "$REL_NAME" =~ ^(.*)-relation-[a-z]+$ ]] && REL_NAME=${BASH_REMATCH[1]}
 
 # Command
@@ -48,18 +48,18 @@ do_changed() {
     # This action should be idempotent.
     $LOGCMD "Relation $REL_NAME: $JUJU_REMOTE_UNIT modified its settings"
     $LOGCMD Relation settings:
-    $LOGCMD $($REL_GET)
+    $LOGCMD $(relation-get)
     $LOGCMD Relation members:
-    $LOGCMD $($REL_LIST)
+    $LOGCMD $(relation-list)
 
     [ -x $HOST_SCR ] || { $LOGCMD "host configurator not resolved."; exit 0; }
 
     $HOST_SCR begin
-    $HOST_SCR set issuer_url   <<< $($REL_GET issuer_url)
-    $HOST_SCR set auth_url     <<< $($REL_GET authorization_endpoint)
-    $HOST_SCR set token_url    <<< $($REL_GET token_endpoint)
-    $HOST_SCR set userinfo_url <<< $($REL_GET userinfo_endpoint)
-    $HOST_SCR set jwks_url     <<< $($REL_GET jwks_endpoint)
+    $HOST_SCR set issuer_url   <<< $(relation-get issuer_url)
+    $HOST_SCR set auth_url     <<< $(relation-get authorization_endpoint)
+    $HOST_SCR set token_url    <<< $(relation-get token_endpoint)
+    $HOST_SCR set userinfo_url <<< $(relation-get userinfo_endpoint)
+    $HOST_SCR set jwks_url     <<< $(relation-get jwks_endpoint)
     $HOST_SCR commit
 
 }
