@@ -1,4 +1,4 @@
-name: instauth-enhancer
+name: instauth-oic-charm
 summary: simple Instauth subordinate charm
 maintainer: Florian Waibel <fwaibel@eclipsesource.com>
 description: |
