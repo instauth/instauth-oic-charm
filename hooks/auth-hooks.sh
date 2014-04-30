@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e # If any command fails, stop execution of the hook with that error
+
 source "$(dirname "$0")/config.sh"
 
 REL_SET=$(which relation-set   || echo echo "relation-set ")
@@ -52,7 +54,7 @@ do_changed() {
     $LOGCMD Relation members:
     $LOGCMD $(relation-list)
 
-    [ -x $HOST_SCR ] || { $LOGCMD "host configurator not resolved."; exit 0; }
+    [ -x $HOST_SCR ] || { $LOGCMD "host configurator not resolved."; exit 1; }
 
     $HOST_SCR begin
     $HOST_SCR set issuer_url   <<< $(relation-get issuer_url)

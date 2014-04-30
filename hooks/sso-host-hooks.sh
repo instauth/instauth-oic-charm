@@ -31,8 +31,22 @@ do_joined() {
     echo unitName=$JUJU_REMOTE_UNIT > hostInformation.properties
 
     $LOGCMD fake host interface resolution for $JUJU_REMOTE_UNIT
-    REMOTE_SERVICE=$(echo $JUJU_REMOTE_UNIT | sed 's;/.*;;')
-    ln -s reconfigure-$REMOTE_SERVICE $HOST_SCR
+    REMOTE_UNIT=$(echo $JUJU_REMOTE_UNIT | sed 's;/;-;')
+    REMOTE_CHARM=$(python -c "import yaml; print yaml.load(open('/var/lib/juju/agents/unit-$REMOTE_UNIT/charm/metadata.yaml'))['name']")
+
+    # resolve with github-implementation
+    RESOLVED_REPO=host-enhancer
+
+    rm -rf $RESOLVED_REPO
+    CLONE_URL=https://github.com/instauth/${REMOTE_CHARM}-oic_support.git
+
+    $LOGCMD Trying to resolve $REMOTE_CHARM by cloning $CLONE_URL
+    git clone $CLONE_URL $RESOLVED_REPO
+
+    ln -s $RESOLVED_REPO/reconfigure $HOST_SCR
+
+    [ -x $HOST_SCR ] || { $LOGCMD "host configurator not resolved: $CLONE_URL lacks reconfigure script"; exit 1; }
+
 }
 
 do_changed() {
